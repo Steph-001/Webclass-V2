@@ -1,4 +1,7 @@
-/* Custom CSS for the three-section layout and fixed TOC */
+/* ==========================================================================
+   Custom CSS for Webclass-V2 Theme
+   - Combines original custom styles with requested fixes.
+   ========================================================================== */
 
 /* Global styles */
 body {
@@ -6,10 +9,28 @@ body {
   line-height: 1.6;
   color: #333;
   padding-top: 56px; /* Add padding for fixed header */
+  overflow-x: hidden; /* Fix 3: Prevent horizontal scrolling on small screens */
 }
 
+/* Optional: Better handling for horizontal scroll on specific elements */
+pre, .highlight {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre;
+}
+table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+table td, table th {
+    white-space: normal;
+}
+
+
 /* Scroll margin for headings to ensure they're visible below the fixed header */
-h1, h2, h3, h4, h5, h6, 
+h1, h2, h3, h4, h5, h6,
 [id] {
   scroll-margin-top: 100px; /* Increased value for better spacing */
   padding-top: 10px; /* Add padding to ensure content is not too close to the top */
@@ -17,7 +38,7 @@ h1, h2, h3, h4, h5, h6,
 
 /* Fixed header and mobile navigation */
 .fixed-top {
-  z-index: 1030;
+  z-index: 1030; /* Ensures header is on top */
   position: fixed;
   top: 0;
   right: 0;
@@ -68,10 +89,12 @@ h1, h2, h3, h4, h5, h6,
   background-color: #f0f0f0;
   border-right: 1px solid #e0e0e0;
   padding-top: 1rem;
-  position: sticky;
+  position: sticky; /* Keep existing sticky setting */
+  position: -webkit-sticky; /* Add Safari prefix */
   top: 56px; /* Adjusted for fixed header */
   height: calc(100vh - 56px); /* Adjusted for fixed header */
   overflow-y: auto;
+  align-self: flex-start; /* Helps sticky in flex layouts */
 }
 
 .td-sidebar-nav {
@@ -120,8 +143,9 @@ h1, h2, h3, h4, h5, h6,
 .td-main {
   background-color: #ffffff;
   padding: 1.5rem;
-  overflow-y: auto;
-  height: calc(100vh - 56px); /* Adjusted for fixed header */
+  /* Removed height and overflow-y from here, let content determine height */
+  /* height: calc(100vh - 56px); */
+  /* overflow-y: auto; */
 }
 
 .td-content h1 {
@@ -161,12 +185,28 @@ h1, h2, h3, h4, h5, h6,
   background-color: #f0f0f0;
   border-left: 1px solid #e0e0e0;
   padding-top: 1rem;
-  position: sticky;
+  position: sticky; /* Keep existing sticky setting */
+  position: -webkit-sticky; /* Fix 1 & 2: Add Safari prefix */
   top: 56px; /* Adjusted for fixed header */
   height: calc(100vh - 56px); /* Adjusted for fixed header */
   overflow-y: auto;
   padding-bottom: 2rem;
+  align-self: flex-start; /* Helps sticky in flex layouts */
 }
+
+/* Fix 1 & 2: Specific sticky rules for Blog/Docs index pages (ensure cross-browser) */
+/* These might override the general .td-toc rule above if the body class is present */
+.td-blog #td-toc,
+.td-docs #td-toc {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 56px; /* Match existing header height */
+    height: calc(100vh - 56px); /* Match existing calculation */
+    overflow-y: auto;
+    align-self: flex-start; /* Good practice for sticky in flex */
+    /* Inherits background, border, padding from the general .td-toc rule */
+}
+
 
 .td-toc-wrapper {
   padding: 0 1rem;
@@ -205,33 +245,56 @@ h1, h2, h3, h4, h5, h6,
   font-style: italic;
 }
 
-/* Responsive adjustments */
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+/* Fix 4: Hide Header in Landscape Mode on Small Devices */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .fixed-top { /* Target existing header class */
+    display: none !important; /* Use !important to ensure override */
+  }
+  /* If hiding header removes needed top padding, uncomment below */
+  /* body { padding-top: 0 !important; } */
+}
+
+
 @media (max-width: 767.98px) {
   .td-sidebar, .td-toc {
-    position: static;
+    position: static; /* Overrides sticky on small screens */
     height: auto;
+    border: none; /* Remove borders on mobile */
+    padding-top: 0.5rem; /* Reduce padding */
+    background-color: transparent; /* Make background transparent perhaps */
   }
-  
+
   .td-main {
     height: auto;
     padding: 1rem;
   }
-  
+
   /* Ensure mobile menus appear below fixed header */
   .mobile-menu {
-    position: absolute;
+    position: absolute; /* Should this be fixed? Check behavior */
     width: 100%;
-    top: 56px;
-    z-index: 1020;
+    background: #fff; /* Add background for readability */
+    top: 56px; /* Position below header */
+    z-index: 1020; /* Below fixed-top (1030) */
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-top: 1px solid #e0e0e0; /* Add separator */
   }
-  
-  /* Ensure header stays visible on small screens */
-  .fixed-top {
-    position: fixed !important;
-    top: 0 !important;
-    width: 100% !important;
-  }
+
+  /* Ensure header stays visible on small screens (already fixed) */
+  /* .fixed-top rule handles this globally */
+
+  /* Fix 5: Mobile TOC Dropdown Behavior Notes:
+     - Header Disappearance: Your z-index for .fixed-top (1030) and .mobile-menu (1020) looks correct.
+       If the header still disappears, inspect elements to see if another element (perhaps related
+       to search or another dropdown) is overlapping with a higher z-index.
+     - Cannot Fold Back: This is almost certainly an HTML/JS issue. Ensure the toggle button
+       has the correct `data-bs-toggle="collapse"` (or `data-toggle`) and `data-bs-target`
+       (or `data-target`) attributes pointing to the collapsible menu's ID. Check for JS errors.
+  */
 }
 
 /* Medium screen adjustments */
@@ -240,26 +303,35 @@ h1, h2, h3, h4, h5, h6,
   .td-main {
     padding-right: 2rem;
   }
-  
+
   /* Style for medium screen TOC toggle */
   .navbar-toggler {
-    color: rgba(255,255,255,.5);
-    border-color: rgba(255,255,255,.1);
+    /* Keep existing styles or adjust as needed */
+    /* color: rgba(255,255,255,.5); */ /* Commented out - assuming dark text */
+    /* border-color: rgba(255,255,255,.1); */ /* Commented out - assuming dark text */
   }
-  
-  /* Page TOC dropdown for medium screens */
+
+  /* Page TOC dropdown for medium screens - Keep existing style */
   #pageTOC {
     position: absolute;
     right: 0;
     top: 56px;
     width: 300px;
     max-width: 100%;
-    z-index: 1020;
+    z-index: 1020; /* Below fixed-top */
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: #f0f0f0; /* Added background matching sidebar */
+    border: 1px solid #e0e0e0; /* Added border matching sidebar */
+    padding: 1rem; /* Added padding */
+  }
+  #pageTOC #TableOfContents { /* Style TOC within dropdown */
+      padding: 0;
   }
 }
 
-/* Media shortcodes styling */
+/* ==========================================================================
+   Media Shortcodes Styling (Existing)
+   ========================================================================== */
 .video-container {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 aspect ratio */
@@ -294,18 +366,24 @@ h1, h2, h3, h4, h5, h6,
   transform: scale(1.05);
 }
 
+/* Note: PDF styling is now handled IN the shortcode */
+/* Original .pdf-container might conflict, consider removing if using new shortcode */
+/*
 .pdf-container {
   width: 100%;
   height: 600px;
   margin-bottom: 1.5rem;
 }
+*/
 
 .audio-container {
   width: 100%;
   margin-bottom: 1.5rem;
 }
 
-/* Quiz styling */
+/* ==========================================================================
+   Quiz Styling (Existing)
+   ========================================================================== */
 .quiz-container {
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -352,3 +430,7 @@ h1, h2, h3, h4, h5, h6,
 .quiz-submit:hover {
   background-color: #0056b3;
 }
+
+/* ==========================================================================
+   End of Custom CSS
+   ========================================================================== */

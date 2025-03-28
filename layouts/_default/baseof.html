@@ -32,39 +32,48 @@
 </head>
 <body>
   <header class="fixed-top">
+    <!-- Main Navigation Bar -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <a class="navbar-brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a>
-      
-      <!-- Mobile navigation toggles -->
-      <div class="d-flex d-md-none ml-auto">
+
+      <!-- Mobile Toggles (Right Aligned) -->
+      <div class="d-flex d-md-none align-items-center ml-auto"> <!-- Added align-items-center -->
         <!-- Materials Menu Toggle -->
         <button class="navbar-toggler mr-2" type="button" data-toggle="collapse" data-target="#materialsSidebar" aria-controls="materialsSidebar" aria-expanded="false" aria-label="Toggle materials">
           <i class="fas fa-book"></i>
         </button>
-        
+
         <!-- Teaching Units Menu Toggle -->
         <button class="navbar-toggler mr-2" type="button" data-toggle="collapse" data-target="#unitsSidebar" aria-controls="unitsSidebar" aria-expanded="false" aria-label="Toggle units">
           <i class="fas fa-graduation-cap"></i>
         </button>
-        
+
         <!-- Page TOC Toggle -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#pageTOC" aria-controls="pageTOC" aria-expanded="false" aria-label="Toggle page TOC">
+        <button class="navbar-toggler mr-2" type="button" data-toggle="collapse" data-target="#pageTOC" aria-controls="pageTOC" aria-expanded="false" aria-label="Toggle page TOC">
           <i class="fas fa-list"></i>
         </button>
+
+        <!-- NEW: Mobile Search Icon Toggle -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mobileSearchCollapse" aria-controls="mobileSearchCollapse" aria-expanded="false" aria-label="Toggle search">
+          <i class="fas fa-search"></i> <!-- Search Icon -->
+        </button>
+
+        <!-- Main Mobile Navigation Toggle (Hamburger) - Moved slightly right -->
+        <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
       </div>
-      
-      <!-- Medium screen TOC toggle -->
+
+      <!-- Medium screen TOC toggle (Keep as is) -->
       <div class="d-none d-md-block d-xl-none ml-auto">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#pageTOC" aria-controls="pageTOC" aria-expanded="false" aria-label="Toggle page TOC">
           <i class="fas fa-list"></i> Page Contents
         </button>
       </div>
-      
-      <!-- Main navigation -->
-      <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+
+      <!-- Main Collapsible Navigation Content (Desktop + Mobile Main Menu) -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Main Menu Links -->
         <ul class="navbar-nav mr-auto">
           {{ $currentPage := . }}
           {{ range .Site.Menus.main }}
@@ -73,16 +82,28 @@
           </li>
           {{ end }}
         </ul>
-        
-        <!-- Search box -->
-        <form class="form-inline my-2 my-lg-0" action="/search/" method="get">
+
+        <!-- Desktop Search Box (Hidden on Mobile) -->
+        <!-- Use d-none d-md-flex to show only on md and up -->
+        <form class="form-inline my-2 my-lg-0 d-none d-md-flex" action="/search/" method="get">
           <input class="form-control mr-sm-2 search-box" type="search" placeholder="Search" aria-label="Search" name="q">
           <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
         </form>
       </div>
-    </nav>
-    
-    <!-- Mobile collapsible menus -->
+    </nav> <!-- End of Main Navigation Bar -->
+
+    <!-- NEW: Mobile Search Collapse Area (Shown only when search icon clicked) -->
+    <!-- Positioned below the nav, but visually part of the header when open -->
+    <div class="collapse bg-dark p-2 d-md-none" id="mobileSearchCollapse">
+        <form class="form-inline w-100" action="/search/" method="get">
+          <!-- Make input take more space on mobile -->
+          <input class="form-control flex-grow-1 mr-2 search-box" type="search" placeholder="Search site..." aria-label="Search" name="q">
+          <button class="btn btn-outline-light" type="submit">Go</button>
+        </form>
+    </div>
+
+
+    <!-- Mobile collapsible menus (Keep As Is) -->
     <div class="collapse navbar-collapse bg-light mobile-menu" id="materialsSidebar">
       <div class="p-3">
         <h5>Materials</h5>
@@ -93,7 +114,7 @@
         </ul>
       </div>
     </div>
-    
+
     <div class="collapse navbar-collapse bg-light mobile-menu" id="unitsSidebar">
       <div class="p-3">
         <h5>Teaching Units</h5>
@@ -104,7 +125,7 @@
         </ul>
       </div>
     </div>
-    
+
     <div class="collapse navbar-collapse bg-light mobile-menu" id="pageTOC">
       <div class="p-3">
         <h5>On This Page</h5>
